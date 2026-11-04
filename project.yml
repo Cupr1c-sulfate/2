@@ -13,6 +13,9 @@ targets:
         type: folder
         buildPhase: resources
     dependencies:
+      - sdk: UIKit.framework
+      - sdk: Foundation.framework
+      - sdk: CoreGraphics.framework
       - framework: Vendor/NodeMobile.xcframework
         embed: true
     settings:
