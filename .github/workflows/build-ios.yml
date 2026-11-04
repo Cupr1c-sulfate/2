@@ -1,0 +1,44 @@
+name: Build iPhone local probe
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.1'
+      - name: Extract source
+        run: mkdir -p source && unzip -q ios-local-probe-ready.zip -d source
+      - name: Test probe
+        working-directory: source
+        run: node --test tests/probe.test.cjs
+      - name: Install generator
+        run: brew install xcodegen
+      - name: Prepare runtime
+        working-directory: source
+        run: bash scripts/prepare.sh
+      - name: Build IPA
+        working-directory: source
+        run: |
+          set -o pipefail
+          bash scripts/build.sh 2>&1 | tee build/xcodebuild.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DSHLocalProbe-unsigned
+          path: source/build/DSHLocalProbe-unsigned.ipa
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-diagnostics
+          path: source/build/xcodebuild.log
+          if-no-files-found: ignore
