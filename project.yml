@@ -1,0 +1,33 @@
+name: DSHLocalProbe
+options:
+  bundleIdPrefix: local.dshprobe
+  deploymentTarget:
+    iOS: '16.0'
+targets:
+  DSHLocalProbe:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: nodejs-project
+        type: folder
+        buildPhase: resources
+    dependencies:
+      - framework: Vendor/NodeMobile.xcframework
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.dshprobe.runtime
+        TARGETED_DEVICE_FAMILY: '1,2'
+        CLANG_CXX_LANGUAGE_STANDARD: c++17
+        CLANG_ENABLE_OBJC_ARC: YES
+        CODE_SIGNING_ALLOWED: NO
+        LD_RUNPATH_SEARCH_PATHS: '$(inherited) @executable_path/Frameworks'
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: DSH 本机验证
+        CFBundleShortVersionString: '0.1.0'
+        CFBundleVersion: '1'
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
